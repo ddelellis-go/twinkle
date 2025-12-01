@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	mode = "xterm"
+	mode = "ws"
 )
 
 func main() {
@@ -35,9 +35,13 @@ func main() {
 		os.Exit(ec)
 	}()
 
-	debug("getting a lights string")
 	if mode == "ws" {
+		debug("getting a WS2811 obj")
 		if ws, err = ws2811.MakeWS2811(getOpts()); err != nil {
+			return
+		}
+		if ws == nil {
+			err = fmt.Errorf("returned poiner was nil")
 			return
 		}
 
@@ -48,7 +52,8 @@ func main() {
 	}
 
 
-	lights := makeLights(50, ws)
+	debug("getting a lights string")
+	lights := makeLights(150, ws)
 	showLights(lights, ws)
 }
 
@@ -56,25 +61,26 @@ func showLights(lights []*Light, ws *ws2811.WS2811) (err error) {
 	debug("starting main loop")
 	for { func() {
 		mark := time.Now()
+		midnight := time.Date(mark.Year(), mark.Month(), mark.Day(), 0, 0, 0, 0,time.Local)
 		line := " "
 		defer func() {
 			if mode == "ws" {
 				if err = ws.Render(); err != nil {
 					return
 				}
-			} else {
 				fmt.Printf("%s\r", line)
-				time.Sleep(1 * time.Millisecond)
+				if err = ws.Wait(); err != nil {
+					return
+				}
 			}
 		}()
 
 		for i, v := range lights {
-			var color uint32
 			if mark.After(v.SwitchTime) {
-				v.Cycle(mark)
+				v.Cycle(mark, midnight)
 			}
 			if ws != nil {
-				ws.Leds(0)[i] = color
+				ws.Leds(0)[i] = v.WsColor
 			}
 			if mode == "xterm" || mode == "tty" {
 				line += v.GetColor()
@@ -92,8 +98,9 @@ func makeLights(count int, ws *ws2811.WS2811) (lights []*Light) {
 		v.SwitchTime = mark
 		v.SetDurations()
 		v.Color = i%4 + 1
+		v.WsColor = WsColorWheel[ v.Color ]
 		v.StartTime = time.Hour * 17
-		v.StopTime = time.Hour * 6
+		v.EndTime = time.Hour * 6
 		lights[i] = &v
 	}
 
@@ -120,7 +127,8 @@ func getOpts() *ws2811.Option {
 	var opt ws2811.Option
 	opt = ws2811.DefaultOptions
 
-	opt.Channels[0].LedCount = 50
-	opt.Channels[0].Brightness = 64
+	opt.Channels[0].LedCount = 150
+	opt.Channels[0].Brightness = 128
+	debug("%+#v", opt)
 	return &opt
 }
