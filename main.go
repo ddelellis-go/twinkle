@@ -128,7 +128,7 @@ func getOpts() *ws2811.Option {
 	opt = ws2811.DefaultOptions
 
 	opt.Channels[0].LedCount = 150
-	opt.Channels[0].Brightness = 128
+	opt.Channels[0].Brightness = 255
 	debug("%+#v", opt)
 	return &opt
 }
