@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const (
+var (
 	mode = "ws"
 )
 
@@ -59,8 +59,11 @@ func main() {
 
 func showLights(lights []*Light, ws *ws2811.WS2811) (err error) {
 	debug("starting main loop")
+
+
 	for { func() {
 		mark := time.Now()
+		var nextCycle time.Time
 		midnight := time.Date(mark.Year(), mark.Month(), mark.Day(), 0, 0, 0, 0,time.Local)
 		line := " "
 		defer func() {
@@ -68,11 +71,13 @@ func showLights(lights []*Light, ws *ws2811.WS2811) (err error) {
 				if err = ws.Render(); err != nil {
 					return
 				}
-				fmt.Printf("%s\r", line)
 				if err = ws.Wait(); err != nil {
 					return
 				}
 			}
+			sleepDuration := time.Until(nextCycle)
+			fmt.Printf("%s\r",line)
+			time.Sleep(sleepDuration)
 		}()
 
 		for i, v := range lights {
@@ -84,6 +89,13 @@ func showLights(lights []*Light, ws *ws2811.WS2811) (err error) {
 			}
 			if mode == "xterm" || mode == "tty" {
 				line += v.GetColor()
+			}
+			if nextCycle.IsZero() {
+				nextCycle = v.SwitchTime
+			} else {
+				if v.SwitchTime.Before(nextCycle) {
+					nextCycle = v.SwitchTime
+				}
 			}
 			lights[i] = v
 		}
