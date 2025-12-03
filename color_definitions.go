@@ -16,7 +16,7 @@ const (
 	XtermReset   = "\033[0m"
 	XtermRed     = "\033[31m"
 	XtermGreen   = "\033[32m"
-	XtermBlue    = "\033[34m"
+	XtermBlue    = "\033[94m"
 	XtermYellow  = "\033[33m"
 	XtermMagenta = "\033[35m"
 	XtermCyan    = "\033[36m"
@@ -26,7 +26,7 @@ const (
 	WsOff     = uint32(0x000000)
 	WsRed     = uint32(0xff0000)
 	WsGreen   = uint32(0x00ff00)
-	WsBlue    = uint32(0x0000ff)
+	WsBlue    = uint32(0x1e90ff)
 	WsYellow  = uint32(0xffff00)
 	WsMagenta = uint32(0xff00ff)
 	WsCyan    = uint32(0x00ffff)
