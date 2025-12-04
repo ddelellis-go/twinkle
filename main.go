@@ -15,7 +15,7 @@ var count int
 
 func main() {
 
-	flag.StringVar(&mode, "displaymode", "ws", "'xterm', 'tty', or 'ws'")
+	flag.StringVar(&mode, "displaymode", "tty", "'xterm', 'tty', or 'ws'")
 	flag.IntVar(&count, "bulbcount", 20, "number of bulbs to operate on")
 	flag.Parse()
 

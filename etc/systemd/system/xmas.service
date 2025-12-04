@@ -1,0 +1,11 @@
+[Unit]
+Description=Pretty Lights
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/twinkle --bulbcount 150 --displaymode ws
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=syslog.service
