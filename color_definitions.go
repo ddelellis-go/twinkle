@@ -26,7 +26,7 @@ const (
 	WsOff     = uint32(0x000000)
 	WsRed     = uint32(0xff0000)
 	WsGreen   = uint32(0x00ff00)
-	WsBlue    = uint32(0x0090ff)
+	WsBlue    = uint32(0x0000ff)
 	WsYellow  = uint32(0xffff00)
 	WsMagenta = uint32(0xff00ff)
 	WsCyan    = uint32(0x00ffff)
